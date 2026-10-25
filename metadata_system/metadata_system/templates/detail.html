@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ asset.name }}</h1>
+<div class="actions">
+  <a class="btn" href="{{ url_for('edit', asset_id=asset.id) }}">Edit</a>
+  <form method="post" action="{{ url_for('delete', asset_id=asset.id) }}" onsubmit="return confirm('Delete this asset?');">
+    <button class="btn danger" type="submit">Delete</button>
+  </form>
+  <a href="{{ url_for('index') }}">&larr; Back</a>
+</div>
+
+<h2>Core metadata</h2>
+<dl>
+  <dt>Type</dt><dd>{{ asset.asset_type }}</dd>
+  <dt>Description</dt><dd>{{ asset.description or '-' }}</dd>
+  <dt>Owner</dt><dd>{{ asset.owner or '-' }}</dd>
+  <dt>Source</dt><dd>{{ asset.source or '-' }}</dd>
+  <dt>Tags</dt><dd>{% for t in asset.tags %}<a class="tag" href="{{ url_for('index', tag=t) }}">{{ t }}</a>{% else %}-{% endfor %}</dd>
+  <dt>Created</dt><dd>{{ asset.created_at }}</dd>
+  <dt>Last updated</dt><dd>{{ asset.updated_at }}</dd>
+</dl>
+
+<h2>Custom fields</h2>
+{% if asset.custom_fields %}
+<dl>
+  {% for k, v in asset.custom_fields.items() %}<dt>{{ k }}</dt><dd>{{ v or '-' }}</dd>{% endfor %}
+</dl>
+{% else %}<p class="empty">No custom fields.</p>{% endif %}
+{% endblock %}

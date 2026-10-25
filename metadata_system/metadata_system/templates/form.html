@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ 'Edit Asset' if mode == 'edit' else 'New Asset' }}</h1>
+<form method="post" class="asset-form">
+  <label>Name *
+    <input type="text" name="name" value="{{ asset.name or '' }}" required>
+  </label>
+  <label>Description
+    <textarea name="description" rows="3">{{ asset.description or '' }}</textarea>
+  </label>
+  <div class="row">
+    <label>Type
+      <select name="asset_type">
+        {% for t in types %}<option value="{{ t }}" {{ 'selected' if t == asset.asset_type }}>{{ t }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Owner
+      <input type="text" name="owner" value="{{ asset.owner or '' }}">
+    </label>
+  </div>
+  <label>Source (URL, path, system)
+    <input type="text" name="source" value="{{ asset.source or '' }}">
+  </label>
+  <label>Tags (comma separated)
+    {% set tag_value = asset.tags if asset.tags is string else '' %}
+    <input type="text" name="tags" value="{{ tag_value }}" placeholder="finance, quarterly, pii">
+  </label>
+
+  <h2>Custom fields</h2>
+  <div id="fields">
+    {% for k, v in asset.fields %}
+    <div class="field-row">
+      <input type="text" name="meta_key" value="{{ k }}" placeholder="Key">
+      <input type="text" name="meta_value" value="{{ v }}" placeholder="Value">
+      <button type="button" class="btn danger" onclick="this.parentElement.remove()">x</button>
+    </div>
+    {% endfor %}
+  </div>
+  <button type="button" class="btn secondary" onclick="addField()">+ Add field</button>
+
+  <div class="actions">
+    <button class="btn" type="submit">Save</button>
+    <a href="{{ url_for('detail', asset_id=asset.id) if mode == 'edit' else url_for('index') }}">Cancel</a>
+  </div>
+</form>
+
+<script>
+function addField() {
+  const row = document.createElement('div');
+  row.className = 'field-row';
+  row.innerHTML = '<input type="text" name="meta_key" placeholder="Key">' +
+                  '<input type="text" name="meta_value" placeholder="Value">' +
+                  '<button type="button" class="btn danger" onclick="this.parentElement.remove()">x</button>';
+  document.getElementById('fields').appendChild(row);
+}
+</script>
+{% endblock %}

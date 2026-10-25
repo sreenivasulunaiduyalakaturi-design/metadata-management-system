@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metadata Management System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <a class="brand" href="{{ url_for('index') }}">Metadata Management System</a>
+    <a class="btn" href="{{ url_for('create') }}">+ New Asset</a>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% if content_404 %}
+      <h1>404 - Not found</h1>
+      <p><a href="{{ url_for('index') }}">Back to catalog</a></p>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

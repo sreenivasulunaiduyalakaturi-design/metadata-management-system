@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Asset Catalog <small>({{ assets|length }} of {{ total }})</small></h1>
+
+<form class="filters" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search name, owner, tags, fields...">
+  <select name="type">
+    <option value="">All types</option>
+    {% for t in types %}
+      <option value="{{ t }}" {{ 'selected' if t == selected_type }}>{{ t }}</option>
+    {% endfor %}
+  </select>
+  {% if selected_tag %}<input type="hidden" name="tag" value="{{ selected_tag }}">{% endif %}
+  <button class="btn" type="submit">Search</button>
+  {% if q or selected_type or selected_tag %}<a href="{{ url_for('index') }}">Clear</a>{% endif %}
+</form>
+
+{% if selected_tag %}<p>Filtering by tag: <span class="tag">{{ selected_tag }}</span></p>{% endif %}
+
+{% if assets %}
+<table>
+  <thead><tr><th>Name</th><th>Type</th><th>Owner</th><th>Tags</th><th>Updated</th></tr></thead>
+  <tbody>
+  {% for a in assets %}
+    <tr>
+      <td><a href="{{ url_for('detail', asset_id=a.id) }}">{{ a.name }}</a></td>
+      <td>{{ a.asset_type }}</td>
+      <td>{{ a.owner or '-' }}</td>
+      <td>{% for t in a.tags %}<a class="tag" href="{{ url_for('index', tag=t) }}">{{ t }}</a>{% endfor %}</td>
+      <td>{{ a.updated_at }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p class="empty">No assets found. <a href="{{ url_for('create') }}">Create the first one.</a></p>
+{% endif %}
+{% endblock %}
